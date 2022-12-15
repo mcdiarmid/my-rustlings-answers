@@ -1,3 +1,8 @@
+# My Rustlings solutions
+
+The [rustlings](https://github.com/rust-lang/rustlings) repository of exercises seems to be a great resource for picking up rust.
+This repository contains my initial solutions to each of these exercises (found in https://github.com/rust-lang/rustlings/tree/main/exercises), coming from someone with a Python and C/C++ background.
+
 # Exercise to Book Chapter mapping
 
 | Exercise               | Book Chapter        |
