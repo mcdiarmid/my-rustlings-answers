@@ -28,8 +28,6 @@ enum ParsePersonError {
     ParseInt(ParseIntError),
 }
 
-// I AM NOT DONE
-
 // Steps:
 // 1. If the length of the provided string is 0, an error should be returned
 // 2. Split the given string on the commas present in it
@@ -46,6 +44,43 @@ enum ParsePersonError {
 impl FromStr for Person {
     type Err = ParsePersonError;
     fn from_str(s: &str) -> Result<Person, Self::Err> {
+        /* // This works but can I make it cleaner?
+        if s.is_empty() {
+            return Err(ParsePersonError::Empty);
+        }
+        match s.split_once(',') {
+            Some(("", _)) => {
+                Err(ParsePersonError::NoName)
+            }
+            None => {
+                Err(ParsePersonError::BadLen)
+            }
+            Some((name, age)) => {  // Correct number of fields
+                if age.contains(',') {
+                    Err(ParsePersonError::BadLen)
+                } else {
+                    let age = age
+                        .parse::<usize>()
+                        .map_err(|e| ParsePersonError::ParseInt(e))?;
+                    Ok(Person { name: String::from(name), age: age })
+                }
+            }
+        }
+        */
+        let chunks: Vec<&str> = s.split(',').collect();
+        match chunks[..] {
+            [name, ] if name.is_empty() => { Err(ParsePersonError::Empty) }  // No commas found
+            [_, ] => { Err(ParsePersonError::BadLen) }  // No commas found
+            ["", _] => { Err(ParsePersonError::NoName) }  // No name, maybe age
+            [name, age] => {  // Good name and length
+                let age = age
+                    .parse::<usize>()
+                    .map_err(|e| ParsePersonError::ParseInt(e))?;
+                Ok(Person{ name: String::from(name), age: age })  // Ok!
+            }
+            _ => { Err(ParsePersonError::BadLen) }  // More than one comma
+        }
+
     }
 }
 
@@ -65,6 +100,7 @@ mod tests {
     #[test]
     fn good_input() {
         let p = "John,32".parse::<Person>();
+        println!("{p:?}");
         assert!(p.is_ok());
         let p = p.unwrap();
         assert_eq!(p.name, "John");
